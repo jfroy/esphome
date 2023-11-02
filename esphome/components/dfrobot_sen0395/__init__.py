@@ -19,6 +19,9 @@ DfrobotSen0395Component = dfrobot_sen0395_ns.class_(
 DfrobotSen0395ResetAction = dfrobot_sen0395_ns.class_(
     "DfrobotSen0395ResetAction", automation.Action
 )
+DfrobotSen0395SyncAction = dfrobot_sen0395_ns.class_(
+    "DfrobotSen0395SyncAction", automation.Action
+)
 DfrobotSen0395SettingsAction = dfrobot_sen0395_ns.class_(
     "DfrobotSen0395SettingsAction", automation.Action
 )
@@ -57,6 +60,22 @@ async def to_code(config):
     ),
 )
 async def dfrobot_sen0395_reset_to_code(config, action_id, template_arg, args):
+    var = cg.new_Pvariable(action_id, template_arg)
+    await cg.register_parented(var, config[CONF_ID])
+
+    return var
+
+
+@automation.register_action(
+    "dfrobot_sen0395.sync",
+    DfrobotSen0395SyncAction,
+    maybe_simple_id(
+        {
+            cv.GenerateID(): cv.use_id(DfrobotSen0395Component),
+        }
+    ),
+)
+async def dfrobot_sen0395_sync_to_code(config, action_id, template_arg, args):
     var = cg.new_Pvariable(action_id, template_arg)
     await cg.register_parented(var, config[CONF_ID])
 

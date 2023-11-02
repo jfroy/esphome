@@ -153,5 +153,45 @@ class SensitivityCommand : public Command {
   uint8_t sensitivity_;
 };
 
+class GetLatencyCommand : public Command {
+ public:
+  GetLatencyCommand() {
+    cmd_ = "getLatency";
+  };
+  uint8_t on_message(std::string &message) override;
+};
+
+class GetRangeCommand : public Command {
+ public:
+  GetRangeCommand() {
+    cmd_ = "getRange";
+  };
+  uint8_t on_message(std::string &message) override;
+};
+
+class GetUartOutputCommand : public Command {
+ public:
+  GetUartOutputCommand(UartSelector sel) {
+    cmd_ = "getUartOutput " + to_string(static_cast<int8_t>(sel));
+  };
+  uint8_t on_message(std::string &message) override;
+};
+
+class GetLedModeCommand : public Command {
+ public:
+  GetLedModeCommand() {
+    cmd_ = "getLedMode 1";
+  };
+  uint8_t on_message(std::string &message) override;
+};
+
+class GetSensitivityCommand : public Command {
+ public:
+  GetSensitivityCommand() {
+    cmd_ = "getSensitivity";
+  };
+  uint8_t on_message(std::string &message) override;
+};
+
 }  // namespace dfrobot_sen0395
 }  // namespace esphome

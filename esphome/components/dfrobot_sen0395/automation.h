@@ -92,5 +92,18 @@ class DfrobotSen0395SettingsAction : public Action<Ts...>, public Parented<Dfrob
   }
 };
 
+template<typename... Ts>
+class DfrobotSen0395SyncAction : public Action<Ts...>, public Parented<DfrobotSen0395Component> {
+ public:
+  void play(Ts... x) {
+    this->parent_->enqueue(make_unique<GetSensitivityCommand>());
+    this->parent_->enqueue(make_unique<GetLatencyCommand>());
+    this->parent_->enqueue(make_unique<GetRangeCommand>());
+    this->parent_->enqueue(make_unique<GetLedModeCommand>());
+    this->parent_->enqueue(make_unique<GetUartOutputCommand>(UartSelector::PRESENCE));
+    this->parent_->enqueue(make_unique<GetUartOutputCommand>(UartSelector::TARGET));
+  }
+};
+
 }  // namespace dfrobot_sen0395
 }  // namespace esphome

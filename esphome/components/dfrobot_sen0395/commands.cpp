@@ -358,5 +358,61 @@ uint8_t SensitivityCommand::on_message(std::string &message) {
   return 0;  // Command not done yet
 }
 
+uint8_t GetRangeCommand::on_message(std::string &message) {
+  auto pos = message.find("Response ");
+  if (pos == 0) {
+    ESP_LOGI(TAG, "config: %s", message.substr(std::string("Response ").size(), std::string::npos).c_str());
+  } else if (message == "Done") {
+    ESP_LOGD(TAG, "Used command: %s", this->cmd_.c_str());
+    return 1;  // Command done
+  }
+  return 0;  // Command not done yet
+}
+
+uint8_t GetLatencyCommand::on_message(std::string &message) {
+  auto pos = message.find("Response ");
+  if (pos == 0) {
+    ESP_LOGI(TAG, "config: %s", message.substr(std::string("Response ").size(), std::string::npos).c_str());
+  } else if (message == "Done") {
+    ESP_LOGD(TAG, "Used command: %s", this->cmd_.c_str());
+    return 1;  // Command done
+  }
+  return 0;  // Command not done yet
+  return 1;  // Command done
+}
+
+uint8_t GetLedModeCommand::on_message(std::string &message) {
+  auto pos = message.find("Response ");
+  if (pos == 0) {
+    ESP_LOGI(TAG, "config: %s", message.substr(std::string("Response ").size(), std::string::npos).c_str());
+  } else if (message == "Done") {
+    ESP_LOGD(TAG, "Used command: %s", this->cmd_.c_str());
+    return 1;  // Command done
+  }
+  return 0;  // Command not done yet
+}
+
+uint8_t GetUartOutputCommand::on_message(std::string &message) {
+  auto pos = message.find("Response ");
+  if (pos == 0) {
+    ESP_LOGI(TAG, "config: %s", message.substr(std::string("Response ").size(), std::string::npos).c_str());
+  } else if (message == "Done") {
+    ESP_LOGD(TAG, "Used command: %s", this->cmd_.c_str());
+    return 1;  // Command done
+  }
+  return 0;  // Command not done yet
+}
+
+uint8_t GetSensitivityCommand::on_message(std::string &message) {
+  auto pos = message.find("Response ");
+  if (pos == 0) {
+    ESP_LOGI(TAG, "config: %s", message.substr(std::string("Response ").size(), std::string::npos).c_str());
+  } else if (message == "Done") {
+    ESP_LOGD(TAG, "Used command: %s", this->cmd_.c_str());
+    return 1;  // Command done
+  }
+  return 0;  // Command not done yet
+}
+
 }  // namespace dfrobot_sen0395
 }  // namespace esphome
