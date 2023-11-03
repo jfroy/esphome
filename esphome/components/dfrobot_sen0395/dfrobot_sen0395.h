@@ -18,6 +18,8 @@ namespace dfrobot_sen0395 {
 
 const uint8_t MMWAVE_READ_BUFFER_LENGTH = 255;
 
+const size_t MAX_TARGETS = 8;
+
 // forward declaration due to circular dependency
 class DfrobotSen0395Component;
 
@@ -42,6 +44,7 @@ class DfrobotSen0395Component : public uart::UARTDevice, public Component {
   SUB_SWITCH(sensor_active)
   SUB_SWITCH(turn_on_led)
   SUB_SWITCH(presence_via_uart)
+  SUB_SWITCH(target_via_uart)
   SUB_SWITCH(start_after_boot)
 #endif
 
@@ -79,6 +82,15 @@ class DfrobotSen0395Component : public uart::UARTDevice, public Component {
   }
   bool is_uart_presence_active() { return uart_presence_active_; }
 
+  void set_uart_target_active(bool active) {
+    uart_target_active_ = active;
+#ifdef USE_SWITCH
+    if (this->target_via_uart_switch_ != nullptr)
+      this->target_via_uart_switch_->publish_state(active);
+#endif
+  }
+  bool is_uart_target_active() { return uart_target_active_; }
+
   void set_start_after_boot(bool start) {
     start_after_boot_ = start;
 #ifdef USE_SWITCH
@@ -105,7 +117,11 @@ class DfrobotSen0395Component : public uart::UARTDevice, public Component {
   bool active_{false};
   bool led_active_{false};
   bool uart_presence_active_{false};
+  bool uart_target_active_{false};
   bool start_after_boot_{false};
+  uint8_t target_count_{0};
+  std::array<float, MAX_TARGETS> target_distance_m_{0.f};
+  std::array<float, MAX_TARGETS> target_snr_{0.f};
   char read_buffer_[MMWAVE_READ_BUFFER_LENGTH];
   size_t read_pos_{0};
   CircularCommandQueue cmd_queue_;

@@ -21,6 +21,7 @@ class DfrobotSen0395SettingsAction : public Action<Ts...>, public Parented<Dfrob
   TEMPLATABLE_VALUE(int8_t, start_after_power_on)
   TEMPLATABLE_VALUE(int8_t, turn_on_led)
   TEMPLATABLE_VALUE(int8_t, presence_via_uart)
+  TEMPLATABLE_VALUE(int8_t, target_via_uart)
   TEMPLATABLE_VALUE(int8_t, sensitivity)
   TEMPLATABLE_VALUE(float, delay_after_detect)
   TEMPLATABLE_VALUE(float, delay_after_disappear)
@@ -68,7 +69,13 @@ class DfrobotSen0395SettingsAction : public Action<Ts...>, public Parented<Dfrob
     if (this->presence_via_uart_.has_value()) {
       int8_t val = this->presence_via_uart_.value(x...);
       if (val >= 0) {
-        this->parent_->enqueue(make_unique<UartOutputCommand>(val));
+        this->parent_->enqueue(make_unique<UartOutputCommand>(UartSelector::PRESENCE, val));
+      }
+    }
+    if (this->target_via_uart_.has_value()) {
+      int8_t val = this->target_via_uart_.value(x...);
+      if (val >= 0) {
+        this->parent_->enqueue(make_unique<UartOutputCommand>(UartSelector::TARGET, val));
       }
     }
     if (this->sensitivity_.has_value()) {

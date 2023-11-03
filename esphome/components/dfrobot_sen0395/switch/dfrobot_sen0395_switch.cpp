@@ -24,7 +24,20 @@ void Sen0395UartPresenceSwitch::write_state(bool state) {
     was_active = true;
     this->parent_->enqueue(make_unique<PowerCommand>(false));
   }
-  this->parent_->enqueue(make_unique<UartOutputCommand>(state));
+  this->parent_->enqueue(make_unique<UartOutputCommand>(UartSelector::PRESENCE, state));
+  this->parent_->enqueue(make_unique<SaveCfgCommand>());
+  if (was_active) {
+    this->parent_->enqueue(make_unique<PowerCommand>(true));
+  }
+}
+
+void Sen0395UartTargetSwitch::write_state(bool state) {
+  bool was_active = false;
+  if (this->parent_->is_active()) {
+    was_active = true;
+    this->parent_->enqueue(make_unique<PowerCommand>(false));
+  }
+  this->parent_->enqueue(make_unique<UartOutputCommand>(UartSelector::TARGET, state));
   this->parent_->enqueue(make_unique<SaveCfgCommand>());
   if (was_active) {
     this->parent_->enqueue(make_unique<PowerCommand>(true));

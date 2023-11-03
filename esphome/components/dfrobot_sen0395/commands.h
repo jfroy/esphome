@@ -122,14 +122,15 @@ class LedModeCommand : public Command {
   bool active_;
 };
 
+enum class UartSelector : int8_t {
+  PRESENCE = 1,
+  TARGET = 2,
+};
+
 class UartOutputCommand : public Command {
  public:
-  UartOutputCommand(bool active) : active_(active) {
-    if (active) {
-      cmd_ = "setUartOutput 1 1";
-    } else {
-      cmd_ = "setUartOutput 1 0";
-    }
+  UartOutputCommand(UartSelector sel, bool active) : active_(active) {
+    cmd_ = "setUartOutput " + to_string(static_cast<int8_t>(sel)) + " " + to_string(active);
   };
   uint8_t on_message(std::string &message) override;
 

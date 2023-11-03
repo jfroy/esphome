@@ -19,6 +19,7 @@ void DfrobotSen0395Component::dump_config() {
   LOG_SWITCH("  ", "Sensor Active Switch", this->sensor_active_switch_);
   LOG_SWITCH("  ", "Turn on LED Switch", this->turn_on_led_switch_);
   LOG_SWITCH("  ", "Presence via UART Switch", this->presence_via_uart_switch_);
+  LOG_SWITCH("  ", "Target via UART Switch", this->target_via_uart_switch_);
   LOG_SWITCH("  ", "Start after Boot Switch", this->start_after_boot_switch_);
 #endif
 }

@@ -1,6 +1,7 @@
 #include "commands.h"
 
 #include <cmath>
+#include <vector>
 
 #include "esphome/core/log.h"
 
@@ -64,22 +65,62 @@ uint8_t Command::execute(DfrobotSen0395Component *parent) {
 
 uint8_t ReadStateCommand::execute(DfrobotSen0395Component *parent) {
   this->parent_ = parent;
-  if (this->parent_->read_message_()) {
-    std::string message(this->parent_->read_buffer_);
-    if (message.rfind("$JYBSS,0, , , *") != std::string::npos) {
-      this->parent_->set_detected_(false);
-      this->parent_->set_active(true);
-      return 1;  // Command done
-    } else if (message.rfind("$JYBSS,1, , , *") != std::string::npos) {
-      this->parent_->set_detected_(true);
-      this->parent_->set_active(true);
+  if (this->parent_->read_message_() == 0) {
+      if (millis() - this->parent_->ts_last_cmd_sent_ > this->timeout_ms_) {
+        return 1;  // Command done, timeout
+      }
+      return 0;  // Command not done yet.
+  }
+
+  if (strcmp(this->parent_->read_buffer_, "$JYBSS,0, , , *") == 0) {
+    this->parent_->set_detected_(false);
+    this->parent_->set_active(true);
+    return 1;  // Command done
+  }
+
+  if (strcmp(this->parent_->read_buffer_, "$JYBSS,1, , , *") == 0) {
+    this->parent_->set_detected_(true);
+    this->parent_->set_active(true);
+    return 1;  // Command done
+  }
+  
+  char* iter = strstr(this->parent_->read_buffer_, "$JYRPO,");
+  std::string message(this->parent_->read_buffer_);
+  if (message.find("$JYRPO,") != std::string::npos) {
+    std::vector<std::string> tokens;
+    auto iter = message.begin() + 7;
+    auto token = iter;
+    while (iter != message.end()) {
+      if (*iter == ',' || *iter == '*') {
+        tokens.push_back(std::string(token, iter));
+        token = iter + 1;
+      }
+      ++iter;
+    }
+    if (tokens.size() != 7) {
+      ESP_LOGW(TAG, "Invalid JYRPO message: %s", message.c_str());
       return 1;  // Command done
     }
+
+    int target_count = parse_number<int>(tokens[0]).value_or(0);
+    int target_index = parse_number<int>(tokens[1]).value_or(0) - 1;
+    float target_distance = parse_number<float>(tokens[2]).value_or(0.f);
+    float target_snr = parse_number<float>(tokens[4]).value_or(0.f);
+
+    this->parent_->target_count_ = target_count;
+    if (target_index >= 0 && target_index < MAX_TARGETS) {
+      this->parent_->target_distance_m_[target_index] = target_distance;
+      this->parent_->target_snr_[target_index] = target_distance;
+    }
+
+    if (target_index == target_count) {
+      return 1;  // Command done
+    }
+    return 0;  // Command not done yet.
   }
-  if (millis() - this->parent_->ts_last_cmd_sent_ > this->timeout_ms_) {
-    return 1;  // Command done, timeout
-  }
-  return 0;  // Command not done yet.
+
+  ESP_LOGW(TAG, "Unknown state message: %s", message.c_str());
+  return 1;  // Command done
 }
 
 uint8_t ReadStateCommand::on_message(std::string &message) { return 1; }

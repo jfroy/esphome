@@ -23,6 +23,9 @@ Sen0395LedSwitch = dfrobot_sen0395_ns.class_("Sen0395LedSwitch", DfrobotSen0395S
 Sen0395UartPresenceSwitch = dfrobot_sen0395_ns.class_(
     "Sen0395UartPresenceSwitch", DfrobotSen0395Switch
 )
+Sen0395UartTargetSwitch = dfrobot_sen0395_ns.class_(
+    "Sen0395UartTargetSwitch", DfrobotSen0395Switch
+)
 Sen0395StartAfterBootSwitch = dfrobot_sen0395_ns.class_(
     "Sen0395StartAfterBootSwitch", DfrobotSen0395Switch
 )
@@ -49,6 +52,9 @@ CONFIG_SCHEMA = cv.typed_schema(
         ),
         "presence_via_uart": _SWITCH_SCHEMA.extend(
             {cv.GenerateID(): cv.declare_id(Sen0395UartPresenceSwitch)}
+        ),
+        "target_via_uart": _SWITCH_SCHEMA.extend(
+            {cv.GenerateID(): cv.declare_id(Sen0395UartTargetSwitch)}
         ),
         "start_after_boot": _SWITCH_SCHEMA.extend(
             {cv.GenerateID(): cv.declare_id(Sen0395StartAfterBootSwitch)}

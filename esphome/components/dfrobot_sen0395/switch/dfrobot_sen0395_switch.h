@@ -25,6 +25,11 @@ class Sen0395UartPresenceSwitch : public DfrobotSen0395Switch {
   void write_state(bool state) override;
 };
 
+class Sen0395UartTargetSwitch : public DfrobotSen0395Switch {
+ public:
+  void write_state(bool state) override;
+};
+
 class Sen0395StartAfterBootSwitch : public DfrobotSen0395Switch {
  public:
   void write_state(bool state) override;
