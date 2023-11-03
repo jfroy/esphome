@@ -110,11 +110,7 @@ class SaveCfgCommand : public Command {
 class LedModeCommand : public Command {
  public:
   LedModeCommand(bool active) : active_(active) {
-    if (active) {
-      cmd_ = "setLedMode 1 0";
-    } else {
-      cmd_ = "setLedMode 1 1";
-    }
+    cmd_ = "setLedMode 1 " + to_string(!active);
   };
   uint8_t on_message(std::string &message) override;
 
@@ -141,11 +137,8 @@ class UartOutputCommand : public Command {
 class SensitivityCommand : public Command {
  public:
   SensitivityCommand(uint8_t sensitivity) : sensitivity_(sensitivity) {
-    if (sensitivity > 9)
-      sensitivity_ = sensitivity = 9;
-    char tmp_cmd[20] = {0};
-    sprintf(tmp_cmd, "setSensitivity %d", sensitivity);
-    cmd_ = std::string(tmp_cmd);
+    sensitivity_ = sensitivity = clamp(sensitivity, uint8_t(0), uint8_t(9));
+    cmd_ = "setSensitivity " + to_string(sensitivity);
   };
   uint8_t on_message(std::string &message) override;
 
